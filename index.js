@@ -1,11 +1,13 @@
-var w1 = new Worker("http://127.0.0.1:3000/work.js");
+var w1 = new SharedWorker("shareWorker.js");
+var count = 0;
 
-w1.addEventListener("message", function (evt) {
-  document.querySelector('#txt').innerHTML = evt.data.name;
-})
+w1.port.onmessage = function (evt) {
+  console.log(evt.data);
+  console.log(typeof evt.data);
+  count = evt.data
+  document.querySelector('#txt').innerHTML = "all count:" + evt.data;
+}
 
-var count = 1;
-document.querySelector('#btn')
-  .addEventListener('click', function (evt) {
-    w1.postMessage("count num:" + count++);
-  });
+document.querySelector('#btn').addEventListener('click', function (evt) {
+  w1.port.postMessage(++count);
+});
